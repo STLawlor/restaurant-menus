@@ -15,6 +15,7 @@ describe("Restaurant and Menu Models", () => {
       name: "Pie World",
       location: "Manchester",
       cuisine: "Pies",
+      rating: 5
     });
     menu1 = await Menu.create({
       title: "Pies",
@@ -26,6 +27,7 @@ describe("Restaurant and Menu Models", () => {
     expect(restaurant1.name).toEqual("Pie World");
     expect(restaurant1.location).toEqual("Manchester");
     expect(restaurant1.cuisine).toEqual("Pies");
+    expect(restaurant1.rating).toEqual(5);
   });
 
   test("can create a Menu", async () => {
