@@ -1,5 +1,5 @@
 const { sequelize } = require("./db");
-const { Restaurant, Menu } = require("./models/index");
+const { Restaurant, Menu, Item } = require("./models/index");
 const { seedRestaurant, seedMenu } = require("./seedData");
 
 describe("Restaurant and Menu Models", () => {
@@ -26,9 +26,34 @@ describe("Restaurant and Menu Models", () => {
     menu2 = await Menu.create({
       title: "Drinks",
     });
+
+    menu3 = await Menu.create({
+      title: "Cakes and Pies",
+    });
+
+    item1 = await Item.create({
+      name: "Veggie Pie",
+      image: "image.url",
+      price: 3.50,
+      vegetarian: true
+    });
+
+    item2 = await Item.create({
+      name: "Cheese and Onion Pie",
+      image: "image.url",
+      price: 3.50,
+      vegetarian: true
+    });
+
+    item3 = await Item.create({
+      name: "Raspberry Pie",
+      image: "image.url",
+      price: 2.50,
+      vegetarian: true
+    });
   });
 
-  test("can create a Restaurant", async () => {
+  test("can create a Restaurant", () => {
     expect(restaurant1).toBeInstanceOf(Restaurant);
     expect(restaurant1.name).toEqual("Pie World");
     expect(restaurant1.location).toEqual("Manchester");
@@ -36,10 +61,15 @@ describe("Restaurant and Menu Models", () => {
     expect(restaurant1.rating).toEqual(5);
   });
 
-  test("can create a Menu", async () => {
+  test("can create a Menu", () => {
     expect(menu1).toBeInstanceOf(Menu);
     expect(menu1.title).toEqual("Pies");
   });
+
+  test("can create an Item", () => {
+    expect(item1).toBeInstanceOf(Item);
+    expect(item1.price).toEqual(3.50);
+  })
 
   test("can find Restaurants", async () => {
     const allRestaurants = await Restaurant.findAll();
@@ -58,6 +88,20 @@ describe("Restaurant and Menu Models", () => {
     const res1Menus = await restaurant1.getMenus();
 
     expect(res1Menus.length).toEqual(2);
+  });
+
+  test("can add Items to Menus", async () => {
+    await menu1.addItem(item1);
+    const menu1Items = await menu1.getItems();
+
+    expect(menu1Items.length).toEqual(1);
+  });
+
+  test("can add Menus to Items", async () => {
+    await item2.addMenu([menu1, menu3]);
+    const item2Menus = await item2.getMenus();
+
+    expect(item2Menus.length).toEqual(2);
   })
 
   test("can delete Restaurants", async () => {
