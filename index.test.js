@@ -11,14 +11,20 @@ describe("Restaurant and Menu Models", () => {
     // by setting 'force:true' the tables are recreated each time the
     // test suite is run
     await sequelize.sync({ force: true });
+
     restaurant1 = await Restaurant.create({
       name: "Pie World",
       location: "Manchester",
       cuisine: "Pies",
       rating: 5
     });
+
     menu1 = await Menu.create({
       title: "Pies",
+    });
+
+    menu2 = await Menu.create({
+      title: "Drinks",
     });
   });
 
@@ -47,9 +53,22 @@ describe("Restaurant and Menu Models", () => {
     expect(allMenus[0].title).toEqual("Pies");
   });
 
+  test("can add Menus to Restaurant", async () => {
+    await restaurant1.addMenu([menu1, menu2]);
+    const res1Menus = await restaurant1.getMenus();
+
+    expect(res1Menus.length).toEqual(2);
+  })
+
   test("can delete Restaurants", async () => {
-    await restaurant1.destroy();
+    const restaurant2 = await Restaurant.create({
+      name: "Cake Land",
+      location: "Manchester",
+      cuisine: "Cake",
+      rating: 4
+    });
+    await restaurant2.destroy();
     const allRestaurants = await Restaurant.findAll();
-    expect(allRestaurants).toEqual([]);
+    expect(allRestaurants.length).toEqual(1);
   });
 });
