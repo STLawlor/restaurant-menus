@@ -16,7 +16,7 @@ describe("Restaurant and Menu Models", () => {
       name: "Pie World",
       location: "Manchester",
       cuisine: "Pies",
-      rating: 5
+      rating: 5,
     });
 
     menu1 = await Menu.create({
@@ -28,28 +28,28 @@ describe("Restaurant and Menu Models", () => {
     });
 
     menu3 = await Menu.create({
-      title: "Cakes and Pies",
+      title: "Cakes",
     });
 
     item1 = await Item.create({
       name: "Veggie Pie",
       image: "image.url",
-      price: 3.50,
-      vegetarian: true
+      price: 3.5,
+      vegetarian: true,
     });
 
     item2 = await Item.create({
       name: "Cheese and Onion Pie",
       image: "image.url",
-      price: 3.50,
-      vegetarian: true
+      price: 3.5,
+      vegetarian: true,
     });
 
     item3 = await Item.create({
       name: "Raspberry Pie",
       image: "image.url",
-      price: 2.50,
-      vegetarian: true
+      price: 2.5,
+      vegetarian: true,
     });
   });
 
@@ -68,8 +68,8 @@ describe("Restaurant and Menu Models", () => {
 
   test("can create an Item", () => {
     expect(item1).toBeInstanceOf(Item);
-    expect(item1.price).toEqual(3.50);
-  })
+    expect(item1.price).toEqual(3.5);
+  });
 
   test("can find Restaurants", async () => {
     const allRestaurants = await Restaurant.findAll();
@@ -98,21 +98,31 @@ describe("Restaurant and Menu Models", () => {
   });
 
   test("can add Menus to Items", async () => {
-    await item2.addMenu([menu1, menu3]);
-    const item2Menus = await item2.getMenus();
+    await item3.addMenu([menu1, menu3]);
+    const item3Menus = await item3.getMenus();
 
-    expect(item2Menus.length).toEqual(2);
-  })
+    expect(item3Menus.length).toEqual(2);
+  });
 
   test("can delete Restaurants", async () => {
     const restaurant2 = await Restaurant.create({
       name: "Cake Land",
       location: "Manchester",
       cuisine: "Cake",
-      rating: 4
+      rating: 4,
     });
     await restaurant2.destroy();
     const allRestaurants = await Restaurant.findAll();
     expect(allRestaurants.length).toEqual(1);
+  });
+
+  test("can eager load data", async () => {
+    const menuData = await Menu.findAll({
+      include: [{ model: Restaurant }, { model: Item }],
+    });
+
+    expect(menuData.length).toEqual(3);
+    expect(menuData[0].Items.length).toEqual(2);
+    expect(menuData[1].Restaurant.name).toEqual("Pie World");
   });
 });
